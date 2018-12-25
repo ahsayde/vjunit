@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <meta charset="utf-8" />        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
+        <style>
+            .divider{margin:5 0px !important}
+            i.icon.passed:before{content: "\f00c"; color: #17A589}
+            i.icon.failed:before {content: "\f00d"; color: #CD6155}
+            i.icon.errored:before {content: "\f129"; color: #922B21}
+            i.icon.skipped:before {content: "\f05e"; color: #BFC9CA}
+        </style>
+        <script>
+            $(document).ready(function(){
+                $('.ui.accordion').accordion();
+                $('.ui .item').on('click', function() {
+                    $('.ui .item').removeClass('active');
+                    $(this).addClass('active');
+                    
+                    var value = $(this).attr("name");
+                    if(value){
+                        $("[name=testcase]").show();
+                        $("[name=testcase][status!='"+ value +"']").hide();
+                    }else{
+                        $("[name=testcase]").show();
+                    }
+                });
+
+                $('#search').on('keyup', function(e){
+                    var value = $(this).val().toLowerCase();
+                    $("[name='testcase']").filter(function() {
+                        $(this).toggle($(this).attr('id').toLowerCase().indexOf(value) > -1);
+                    });
+                });
+            });
+            
+        </script>
+    </head>
+    <body>
+
+        <div class="ui container" style="margin-top:30px">
+            <div class="ui basic segment">
+                <h2>{{summary.name.title()}} Results</h2>
+                <div class="ui blue secondary menu">
+                    <a class="active  item">All &nbsp; {{summary.tests}}</a>
+                    <a name="failed" class="item">Failed &nbsp; {{summary.failures}}</a>
+                    <a name="errored" class="item">Errored &nbsp; {{summary.errors}}</a>
+                    <a name="skipped" class="item">Skipped &nbsp; {{summary.skip}}</a>
+                    <div class="right menu">
+                        <div class="ui transparent icon input">
+                            <input class="prompt" type="text" id="search" placeholder="Search ...">
+                            <i class="search link icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui basic segment" style="padding-top:0px; !important">
+                <div class="ui styled fluid accordion" style="box-shadow:none;">
+                    {% for testcase in testcases %}
+                        <div id="{{testcase.name}}" name="testcase" status="{{testcase.status}}">
+                            <div class="title">
+                                <i class="{{testcase.status}} icon"></i> {{testcase.classname}} {{testcase.name}}
+                            </div>
+                            <div class="ui inverted segment content">
+                                <code>{{testcase.status.upper()}} &nbsp; (Executed in {{testcase.time}} seconds)</code>
+                                {% if testcase.details %}
+                                    <div class="ui divider"></div>
+                                    {% if testcase.status in ["failed", "errored"] %}
+                                        <pre><code>{{testcase.details.content}}<br>{{testcase.details.message}}</code></pre>
+                                    {% elif testcase.status == "skipped" %}
+                                        {{testcase.details.message}}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
