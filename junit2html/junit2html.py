@@ -23,7 +23,10 @@ class Junit2HTML(object):
         result["summary"]["name"] = content["name"]
         for key in ["tests", "errors", "failures", "skip"]:
             result["summary"][key] = int(content[key])
-        
+        # this check for one test case in xml file 
+        if not isinstance (content['testcase'], list):
+            content['testcase'] = [content['testcase']]
+
         status_map = {"error":"errored", "failure":"failed", "skipped":"skipped"}
         for testcase in content["testcase"]:
             obj = dict()
