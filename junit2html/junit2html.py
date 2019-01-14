@@ -28,19 +28,22 @@ class Junit2HTML(object):
             content['testcase'] = [content['testcase']]
 
         status_map = {"error":"errored", "failure":"failed", "skipped":"skipped"}
-        for testcase in content["testcase"]:
-            obj = dict()
-            for key in testcase.keys():
-                if key in status_map:
-                    obj["status"] = status_map[key]
-                    obj["details"] = dict(testcase[key])
-                else:
-                    obj[key] = testcase[key]
-            
-            if not obj.get("status"):
-                obj["status"] = "passed"
+        if content.get("testcase"):
+            for testcase in content["testcase"]:
+                obj = dict()
+                for key in testcase.keys():
+                    if key in status_map:
+                        obj["status"] = status_map[key]
+                        obj["details"] = dict(testcase[key])
+                    else:
+                        obj[key] = testcase[key]
+                
+                if not obj.get("status"):
+                    obj["status"] = "passed"
 
-            result["testcases"].append(obj)
+                result["testcases"].append(obj)
+        else:
+            result["testcases"] = list()
         return result
 
     def _generate_html(self, result):
