@@ -17,7 +17,7 @@ class Junit2HTML(object):
         template_path = os.path.join(path, "template.html")
         self._template = self._load_file(template_path)
 
-    def _parse(self, path):
+    def parse(self, path):
         result = dict(summary={}, testcases=[])
         content = xmltodict.parse(self._load_file(path), attr_prefix='', cdata_key='content')["testsuite"]
         result["summary"]["name"] = content["name"]
@@ -51,8 +51,9 @@ class Junit2HTML(object):
     def _export_html(self, html, path="."):
         with open(path, "w") as f:
             f.write(html)
+        print("File saved to {}".format(path))
 
-    def convert(self, src, dest):
-        result = self._parse(src)
+    def convert(self, path, dest):
+        result = self.parse(path)
         html = self._generate_html(result)
         self._export_html(html, dest)
