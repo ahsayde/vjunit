@@ -18,8 +18,11 @@ class Junit2HTML(object):
         self._template = self._load_file(template_path)
 
     def parse(self, path):
+        return self.parse_content(self._load_file(path))
+
+    def parse_content(self, content):
+        content = xmltodict.parse(content, attr_prefix='', cdata_key='content')["testsuite"]
         result = dict(summary={}, testcases=[])
-        content = xmltodict.parse(self._load_file(path), attr_prefix='', cdata_key='content')["testsuite"]
         result["summary"]["name"] = content["name"]
         for key in ["tests", "errors", "failures", "skip"]:
             result["summary"][key] = int(content[key])
@@ -45,7 +48,7 @@ class Junit2HTML(object):
             result["testcases"] = list()
         return result
 
-    def _generate_html(self, result):
+    def generate_html(self, result):
         template = self._envrionment.from_string(self._template)
         html = template.render(** result)
         return html
@@ -57,5 +60,5 @@ class Junit2HTML(object):
 
     def convert(self, path, dest):
         result = self.parse(path)
-        html = self._generate_html(result)
+        html = self.generate_html(result)
         self._export_html(html, dest)
