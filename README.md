@@ -2,7 +2,7 @@
 
 ### Installation
 ```bash
-pip install https://github.com/ahmedelsayed-93/junit2html
+pip install git+https://github.com/ahmedelsayed-93/junit2html
 ```
 ### Usage
 ```bash
