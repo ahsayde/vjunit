@@ -48,9 +48,9 @@ class Junit2HTML(object):
             result["testcases"] = list()
         return result
 
-    def generate_html(self, result):
+    def generate_html(self, result, embed=False):
         template = self._envrionment.from_string(self._template)
-        html = template.render(** result)
+        html = template.render(** result, embed=embed)
         return html
 
     def _export_html(self, html, path="."):

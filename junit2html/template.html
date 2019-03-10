@@ -14,8 +14,8 @@
         <script>
             $(document).ready(function(){
                 $('.ui.accordion').accordion();
-                $('.ui .item').on('click', function() {
-                    $('.ui .item').removeClass('active');
+                $('[tab="status"]').on('click', function() {
+                    $('[tab="status"]').removeClass('active');
                     $(this).addClass('active');
                     
                     var value = $(this).attr("name");
@@ -39,14 +39,16 @@
     </head>
     <body>
 
-        <div class="ui container" style="margin-top:30px">
-            <div class="ui basic segment">
+        {% if not embed %}
+            <div class="ui container" style="margin-top:30px">
+        {% endif %}
+                <div class="ui basic segment">
                 <h2>{{summary.name.title()}} Results</h2>
                 <div class="ui blue secondary menu">
-                    <a class="active  item">All &nbsp; {{summary.tests}}</a>
-                    <a name="failed" class="item">Failed &nbsp; {{summary.failures}}</a>
-                    <a name="errored" class="item">Errored &nbsp; {{summary.errors}}</a>
-                    <a name="skipped" class="item">Skipped &nbsp; {{summary.skip}}</a>
+                    <a tab="status" class="active  item">All &nbsp; {{summary.tests}}</a>
+                    <a tab="status" name="failed" class="item">Failed &nbsp; {{summary.failures}}</a>
+                    <a tab="status" name="errored" class="item">Errored &nbsp; {{summary.errors}}</a>
+                    <a tab="status" name="skipped" class="item">Skipped &nbsp; {{summary.skip}}</a>
                     <div class="right menu">
                         <div class="ui transparent icon input">
                             <input class="prompt" type="text" id="search" placeholder="Search ...">
@@ -76,7 +78,10 @@
                         </div>
                     {% endfor %}
                 </div>
+        
             </div>
-        </div>
+        {% if not embed %}
+            </div>
+        {% endif %}
     </body>
 </html>
