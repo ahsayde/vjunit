@@ -50,7 +50,7 @@ class Junit2HTML(object):
 
     def generate_html(self, result, embed=False):
         template = self._envrionment.from_string(self._template)
-        html = template.render(** result, embed=embed)
+        html = template.render(embed=embed, **result)
         return html
 
     def _export_html(self, html, path="."):
