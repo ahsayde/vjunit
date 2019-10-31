@@ -2,12 +2,12 @@
 
 ### Installation
 ```bash
-pip install git+https://github.com/ahmedelsayed-93/junit2html
+pip3 install junit2html
 ```
 ### Usage
 ```bash
-junit2html --file junit-file.xml --output html-file.html 
+junit2html --file <xml file> --output <html file>
 ```
 
 ### Screenshots
-![image](imgs/screenshot1.png)
+![image](assets/screenshot1.png)

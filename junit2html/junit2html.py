@@ -1,6 +1,7 @@
 import os
 import jinja2
-import xmltodict
+import xml.etree.ElementTree as ET
+
 
 class Junit2HTML(object):
     def __init__(self, *args, **kwargs):
@@ -21,36 +22,34 @@ class Junit2HTML(object):
         return self.parse_content(self._load_file(path))
 
     def parse_content(self, content):
-        content = xmltodict.parse(content, attr_prefix='', cdata_key='content')["testsuite"]
-        result = dict(summary={}, testcases=[])
-        result["summary"]["name"] = content["name"]
-        for key in ["tests", "errors", "failures", "skip"]:
-            result["summary"][key] = int(content[key])
-        # this check for one test case in xml file 
-        status_map = {"error":"errored", "failure":"failed", "skipped":"skipped"}
-        if content.get("testcase"):
-            if not isinstance (content['testcase'], list):
-                content['testcase'] = [content['testcase']]
-            for testcase in content["testcase"]:
-                obj = dict()
-                for key in testcase.keys():
-                    if key in status_map:
-                        obj["status"] = status_map[key]
-                        obj["details"] = dict(testcase[key])
+        result = list()
+        tree = ET.fromstring(content)
+        for testsuite in tree.iter(tag="testsuite"):
+            _testsuite = dict(summary={}, testcases=[])
+            _testsuite["summary"] = testsuite.attrib
+            for testcase in testsuite.iter(tag="testcase"):
+                _testcase = testcase.attrib
+                children = testcase.getchildren()
+                if children:
+                    for child in children:
+                        if child.tag == "system-out":
+                            continue
+                        _testcase["status"] = child.tag
+                        _testcase["text"] = child.text
+                        break
                     else:
-                        obj[key] = testcase[key]
-                
-                if not obj.get("status"):
-                    obj["status"] = "passed"
+                        continue
+                else:
+                    _testcase["status"] = "success"
 
-                result["testcases"].append(obj)
-        else:
-            result["testcases"] = list()
+                _testsuite["testcases"].append(_testcase)
+
+            result.append(_testsuite)
         return result
 
     def generate_html(self, result, embed=False):
         template = self._envrionment.from_string(self._template)
-        html = template.render(embed=embed, **result)
+        html = template.render(embed=embed, testsuites=result)
         return html
 
     def _export_html(self, html, path="."):
@@ -59,6 +58,6 @@ class Junit2HTML(object):
         print("File saved to {}".format(path))
 
     def convert(self, path, dest):
-        result = self.parse(path)
-        html = self.generate_html(result)
+        testsuites = self.parse(path)
+        html = self.generate_html(testsuites)
         self._export_html(html, dest)
