@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 from setuptools import setup
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name="vjunit",
     version="0.1",
     description="Generate html file from junit reports",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Ahmed El-Sayed",
     author_email="ahmed.m.elsayed93@gmail.com",
     url="http://github.com/ahelsayd/vjunit",
