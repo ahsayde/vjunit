@@ -1,12 +1,12 @@
-## Junit2Html
+## VJunit
 
 ### Installation
 ```bash
-pip3 install junit2html
+pip3 install vjunit
 ```
 ### Usage
 ```bash
-junit2html --file <xml file> --output <html file>
+vjunit --file <xml file> --output <html file>
 ```
 
 ### Screenshots

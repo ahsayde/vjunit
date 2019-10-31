@@ -3,7 +3,7 @@ import jinja2
 import xml.etree.ElementTree as ET
 
 
-class Junit2HTML(object):
+class VJunit(object):
     def __init__(self, *args, **kwargs):
         self._envrionment = jinja2.Environment()
         self._load_template()
