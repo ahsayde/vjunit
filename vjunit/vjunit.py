@@ -31,14 +31,15 @@ class VJunit(object):
                 _testcase = testcase.attrib
                 children = testcase.getchildren()
                 if children:
+                    stdout = []
                     for child in children:
                         if child.tag == "system-out":
-                            continue
-                        _testcase["status"] = child.tag
-                        _testcase["text"] = child.text
-                        break
+                            stdout.append(child.text)
+                        else:
+                            _testcase["status"] = child.tag
+                            _testcase["text"] = child.text
                     else:
-                        continue
+                        _testcase["stdout"] = "\n".join(stdout)
                 else:
                     _testcase["status"] = "success"
 
