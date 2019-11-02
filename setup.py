@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="vjunit",
-    version="0.4",
+    version="0.5.1",
     description="Generate html file from junit reports",
     long_description=long_description,
     long_description_content_type="text/markdown",

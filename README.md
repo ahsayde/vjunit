@@ -9,5 +9,6 @@ pip3 install vjunit
 vjunit --file <xml file> --output <html file>
 ```
 
-### Screenshots
+### Output
+
 ![image](assets/screenshot1.png)

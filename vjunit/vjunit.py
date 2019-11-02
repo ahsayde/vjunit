@@ -45,6 +45,21 @@ class VJunit(object):
 
                 _testsuite["testcases"].append(_testcase)
 
+            tests = testsuite.attrib.get("tests", 0)
+            errors = testsuite.attrib.get("errors", 0)
+            failures = testsuite.attrib.get("failures", 0)
+            skipped = testsuite.attrib.get("skip", 0) or testsuite.attrib.get("skipped", 0)
+            
+
+            if int(errors):
+                _testsuite["summary"]["status"] = "error"
+            elif int(failures):
+                _testsuite["summary"]["status"] = "failure"
+            elif int(tests) == int(skipped):
+                _testsuite["summary"]["status"] = "skipped"
+            else:
+                _testsuite["summary"]["status"] = "success"
+
             result.append(_testsuite)
         return result
 

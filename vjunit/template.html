@@ -57,7 +57,9 @@
                     <div class="four wide column">
                         <div class="ui secondary vertical pointing menu">
                             {% for testsuite in testsuites %}
-                                <a class="{{ 'active' if loop.index == 1 }} item" data-tab="testsuite.{{loop.index}}">{{testsuite.summary.name}}</a>
+                                <a class="{{ 'active' if loop.index == 1 }} item" data-tab="testsuite.{{loop.index}}">
+                                    <i class="{{testsuite.summary.status}} icon"></i> {{testsuite.summary.name}}
+                                </a>
                             {% endfor %}
                         </div><br><br>
                         <div class="footer">
