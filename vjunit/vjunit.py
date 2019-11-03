@@ -38,6 +38,8 @@ class VJunit(object):
                         else:
                             _testcase["status"] = child.tag
                             _testcase["text"] = child.text
+                            _testcase["type"] = child.attrib.get("type")
+                            _testcase["message"] = child.attrib.get("message")
                     else:
                         _testcase["stdout"] = "\n".join(stdout)
                 else:
@@ -48,8 +50,9 @@ class VJunit(object):
             tests = testsuite.attrib.get("tests", 0)
             errors = testsuite.attrib.get("errors", 0)
             failures = testsuite.attrib.get("failures", 0)
-            skipped = testsuite.attrib.get("skip", 0) or testsuite.attrib.get("skipped", 0)
-            
+            skipped = testsuite.attrib.get("skip", 0) or testsuite.attrib.get(
+                "skipped", 0
+            )
 
             if int(errors):
                 _testsuite["summary"]["status"] = "error"

@@ -19,6 +19,34 @@
                 padding:10px;
                 margin-bottom: 20px;
             }
+            details {
+                margin-bottom: 23px;
+            }
+            summary {
+                cursor: pointer;
+                list-style-type: circle;
+                margin-bottom: 10px;
+                list-style-position: outside;
+            }
+            summary::-webkit-details-marker {
+                display: none
+              }
+            summary:before {
+                content: "[+]  ";
+              }
+            details[open] summary:before {
+                content: "[-]  ";
+              }
+            details pre,  details code{
+                padding-left: 15px;
+            }
+            pre {
+                white-space: pre-wrap;
+                white-space: -moz-pre-wrap;
+                white-space: -pre-wrap;
+                white-space: -o-pre-wrap;
+                word-wrap: break-word;
+            }
         </style>
         <script>
             $(document).ready(function(){
@@ -28,13 +56,17 @@
                     $("html,body").scrollTop(0);
                 });
 
+                $('[name=testcase]').on('click', function() {
+                    window.location.hash = $(this).children(":first")[0].id;
+                });
+
                 $('[tab="status"]').on('click', function() {        
                     var testsuite = $(this).attr('testsuite');
                     var name = $(this).attr('name');
                     
                     $('[tab="status"][testsuite="' + testsuite + '"]').removeClass('active');
-                    $(this).addClass('active');
 
+                    $(this).addClass('active');
                     if (name == "all") {
                         $("[name=testcase][testsuite='" + testsuite + "']").show();
                     } else {
@@ -42,6 +74,17 @@
                         $("[name=testcase][testsuite='" + testsuite + "'][status!='"+ name +"']").hide();
                     }
                 });
+
+                var hash = window.location.hash;
+                if (hash) {
+                    let testcaseId = hash.substring(1);
+                    let testsuiteId = testcaseId.split("-")[0]
+                    $("#"+ testsuiteId).click()
+                    let element = $("#"+ testcaseId)[0];
+                    if (element) {
+                        element.click();
+                    }
+                }
             });
             
         </script>
@@ -52,12 +95,11 @@
         {% endif %}
 
             <div class="ui stackable grid">
-
                 {% if testsuites|length > 1%}
                     <div class="four wide column">
                         <div class="ui secondary vertical pointing menu">
                             {% for testsuite in testsuites %}
-                                <a class="{{ 'active' if loop.index == 1 }} item" data-tab="testsuite.{{loop.index}}">
+                                <a id="{{loop.index}}" name="testsuite" class="{{ 'active' if loop.index == 1 }} item" data-tab="testsuite.{{loop.index}}">
                                     <i class="{{testsuite.summary.status}} icon"></i> {{testsuite.summary.name}}
                                 </a>
                             {% endfor %}
@@ -67,11 +109,12 @@
                         </div>
                     </div>
                 {% endif %}
+
                 <div class="{{'twelve' if testsuites|length > 1 else 'sixteen'}} wide stretched column">
                     {% for testsuite in testsuites %}
 
                         <div class="ui tab {{ 'active' if loop.index == 1 }}" data-tab="testsuite.{{loop.index}}">
-                            <h2>{{testsuite.summary.name}}</h2>
+                            <h2><i class="{{testsuite.summary.status}} icon"></i>  {{testsuite.summary.name}}</h2>
 
                             <div class="ui accordion">
                                 <div class="title">
@@ -102,19 +145,33 @@
                             <div class="ui styled fluid accordion" style="box-shadow:none;">
                                 {% for testcase in testsuite.testcases %}
                                     <div name="testcase" testsuite="testsuite.{{testsuiteId}}" status="{{testcase.status}}">
-                                        <div class="title">
+                                        <div id="{{testsuiteId}}-{{loop.index}}" class="title">
                                             <i class="{{testcase.status}} icon"></i> {{testcase.classname}} {{testcase.name}}
                                         </div>
                                         <div class="ui inverted segment content" style="font-family:monospace">
-                                            <strong style="color:#76D7C4">STDOUT</strong><br>
-                                            <pre><code>{{testcase.stdout or "no stdout"}}</code></pre>
-                                            <div class="ui divider"></div>
-                                            
-                                            <strong style="color:#F1948A">STDERR</strong><br>
-                                            <pre><code>{{testcase.text or "no sterr"}}</code></pre>
-                                            
-                                            <div class="ui divider"></div>
-                                            Excetued in <strong> {{testcase.time}} </strong> seconds
+                                            <div class="ui inverted segment">
+
+                                                {% if testcase.type %}
+                                                    <strong style="color:#D4E6F1">TYPE</strong>: <code>{{testcase.type}}</code><br><br>
+                                                {% endif %}
+                                                    
+                                                <details open>
+                                                    <summary><strong style="color:#FAD7A0">MESSAGE</strong></summary>
+                                                    <pre><code>{{testcase.message}}</code></pre>
+                                                </details>
+
+                                                <details open>
+                                                    <summary><strong style="color:#76D7C4">STDOUT</strong></summary>
+                                                    <code>{{testcase.stdout}}</code>
+                                                </details>
+                                                
+                                                <details open>
+                                                    <summary><strong style="color:#F1948A">STDERR</strong></summary>
+                                                    <pre><code>{{testcase.text}}</code></pre>
+                                                </details>
+                                                <div class="ui divider"></div>
+                                                Excetued in <strong> {{testcase.time}} </strong> seconds
+                                            </div>
                                         </div>
                                     </div>
                                 {% endfor %}
