@@ -29,7 +29,7 @@ class VJunit(object):
             _testsuite["summary"] = testsuite.attrib
             for testcase in testsuite.iter(tag="testcase"):
                 _testcase = testcase.attrib
-                children = testcase.getchildren()
+                children = list(testcase)
                 if children:
                     stdout = []
                     for child in children:
